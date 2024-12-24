@@ -2,71 +2,110 @@
 
 Artifact of the paper "Silhouette: Leveraging Consistency Mechanisms to Detect Bugs in Persistent Memory-Based File Systems" from USENIX FAST '25.
 
-## 1. Prepare Platform
 
-The artifact evaluation could be conducted on the Chameleon platform, offering three methods. It can also be tested on a personal machine (local, remote, or virtual machine).
+There are two ways to evaluate this artifact, by using [Chameleon Trovi](https://chameleoncloud.readthedocs.io/en/latest/technical/sharing.html) or a local machine.
 
-- **[Log in to Chameleon with an Active Allocation](#log-in-to-chameleon-with-an-active-allocation)**
-    - Reviewers need a Chameleon account with an active allocation (lease).
-    - **Single-blind Caution:** The artifact owner may identify reviewers who access the artifact unless the conference committee provides anonymous Chameleon accounts.
+## Option A. Chameleon Cloud
 
-- **[Apply for a Chameleon Day Pass](#apply-for-a-chameleon-day-pass)**
-    - Reviewers can request a temporary day pass to access Chameleon without an active allocation.
-    - No allocation is required, as resources are provisioned from the artifact owner's account.
-    - **Single-blind Caution:** The artifact owner needs approve day-pass requests, potentially revealing the reviewers' email addresses, unless reviewers use anonymous email accounts to apply.
+If you are using Chameleon Cloud, please use the link: XXXX
 
-- **[Access a Pre-configured Chameleon Node via SSH](#access-a-pre-configured-chameleon-node-via-ssh)**
-    - Reviewers can directly log in to a prepared Chameleon node using an SSH key provided in the HotCRP submission.
-    - Anonymous login.
+You can also find a copy of the JupyterLab script at `silhouette_ae.ipynb`
 
-- **[Personal Machine](#personal-machine)**
-    - Could be a local machine, a virtual machine, a could OS instance, etc.
-    - Require additional efforts to setup.
-    - Anonymous.
+## Option B. Personal Machine
 
-#### 1.1 Log in to Chameleon with an Active Allocation
+### 1. Platform
 
-#### 1.2 Apply for a Chameleon Day Pass
-
-#### 1.3 Access a Pre-configured Chameleon Node via SSH
-
-#### 1.4 Personal Machine
-
+If you are using a personal machine (e.g., a virtual machine, a remote node, a local PC), please make sure you have:
 - Ubuntu-22.x
     Silhouette works on any Linux systems, but other systems may have different versions of packages, which may different from the setups shown here.
 - Python-3.10.x
     You are free to install Python by `apt` or `pyenv`. Since Silhouette relies on `ctypes` and `readline`, please ensure the installed Python version includes these modules. Other Python versions are not tested and may not work if some packages/functions are deprecated over time.
 
-## 2. Prepare Environment
+### 2. Prepare Codebase and VM
 
-- Install dependencies
-    ```shell
-    # You may want to see what will be installed before executing this script.
-    ./install_dep.sh
-    ```
+Open a terminal and then execute the below commands.
 
-- Download the code
-    ```shell
-    cd ~
-    mkdir silhouette_ae
-    cd silhouette_ae
-    git clone https://github.com/iaoing/Silhouette
-    ```
+```shell
+# 2.1 Clone Silhouette Repo
+mkdir -p ~/silhouette_ae
+cd ~/silhouette_ae
+git clone https://github.com/iaoing/Silhouette.git
 
-- Download a prepared virtual machine image
-    - This VM image contains a prepared environment for testing NOVA, PMFS, and WineFS.
-    ```shell
-    cd ~
-    cd silhouette_ae
-    mkdir qemu_imgs
-    cd qemu_imgs
-    wget XXXX
-    ```
+# 2.2 Download VM from Zenodo, may take ~20 mins
+mkdir -p ~/silhouette_ae/qemu_imgs
+cd ~/silhouette_ae/qemu_imgs
+wget -O ~/silhouette_ae/qemu_img/silhouette_guest_vm.qcow2 https://zenodo.org/records/14550794/files/silhouette_guest_vm.qcow2?download=1
 
-## 3. Evaluation
+# 2.3 Install Deps and Prepare
+cd ~/silhouette_ae/Silhouette && bash ./install_dep.sh
+cd ~/silhouette_ae/Silhouette && bash ./prepare.sh
+```
 
-1. Bug Reproduction
-  Please refer to `evaluation/bugs/readme.md` for the details.
+### 3. Reproduction
 
-2. Silhouette Scalability
-  Please refer to `evaluation/scalability/readme.md` for the details.
+#### 3.1 Reproduce Bugs
+
+The bug reproduction may take ~2 hours because:
+- Some bugs may block other bugs, we make separate tests for each one.
+- Regardless of the number of test cases, Silhouette follows the same process to prepare virtual machines (VMs). As a result, over 90% of the time is spent setting up the VM for each bug reproduction.
+
+Please refer to `evaluation/bugs/readme.md` for the detailed instructions.
+
+```shell
+cd ~/silhouette_ae/Silhouette/evaluation/bugs
+nohup bash ./reproduce_all.sh &
+```
+
+When the test is done, please refer to `evaluation/bugs/bug{XX}/readme.md` to check the output.
+
+#### 3.2 Scalibility Evaluation
+
+**3.2.1 Test NOVA on ACE-seq3 workload with 20 VMs**
+
+Since testing NOVA, PMFS, and WineFS on ACE-seq3 workload with different crash plan generation schemes (Silhouette, 2CP, Invariants+Comb) may take more than 40 hours, we only test NOVA with Silhouette scheme generation here.
+
+This test takes ~4-5 hours.
+
+Please refer to `evaluation/scalability/readme.md` for the detailed instructions.
+
+```shell
+cd ~/silhouette_ae/Silhouette/evaluation/scalability/seq3/nova/mech2cp
+nohup bash ./run.sh &
+```
+
+The result will be available in the `~/silhouette_ae/Silhouette/evaluation/scalability/seq3/nova/mech2cp/result` directory. please refer to the `Raw Result Layout` section in `evaluation/scalability/readme.md` to check the type generated result.
+
+Samples:
+```shell
+# This shows the time breakdown of this test.
+cat ~/silhouette_ae/Silhouette/evaluation/scalability/seq3/nova/mech2cp/result/result_elapsed_time/result_time.txt
+# This shows the number of generated crash plans
+cat ~/silhouette_ae/Silhouette/evaluation/scalability/seq3/nova/mech2cp/result/result_cps/result.txt
+```
+
+**3.2.2 Test ACE-seq2 workload**
+
+Testing one file system on ACE-seq2 workload with one crash plan generation scheme takes ~30 mins. Therefore, we can run the entrie seq2 workload and plot Figrue 1 and Table 9, similar to that presented in the paper.
+
+Figure 8 requires enabling certain bugs detected by Chipmunk and manual efforts to identify additional bugs, which may extend beyond the scope of this reproduction process.
+
+Figure 9 contains parts of lines shown in Figure 1.
+
+Since testing [Chipmunk](https://github.com/utsaslab/chipmunk) and [Vinter](https://github.com/KIT-OSGroup/vinter/tree/master) take longer time than Silhouette, and both tools have their artifacts available on GitHub, we will not discuss them further here.
+
+```shell
+# Run the test
+# If your time allows, you can test ACE-seq3 workload
+cd ~/silhouette_ae/Silhouette/evaluation/scalability/seq2
+nohup bash ./run_all.sh &
+
+# Analyze the result and plot the figrue and table
+cd ~/silhouette_ae/Silhouette/evaluation/scalability/seq2
+bash ./plot.sh
+
+# Check the table
+cat ~/silhouette_ae/Silhouette/evaluation/scalability/seq2/table_9.txt
+
+# Check the figure
+# You may need to use GUI or `scp` the figure to a local PC to view it.
+```

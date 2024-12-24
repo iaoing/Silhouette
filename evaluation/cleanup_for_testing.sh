@@ -13,7 +13,11 @@ if [ -z "$ssh_config_bak" ]; then
     echo "No matching ssh config bak file found."
 else
     cp "$ssh_config_bak" ~/.ssh/config
-    rm "$ssh_config_bak"
+    if [ $? -eq 0 ]; then
+        rm "$ssh_config_bak"
+    else
+        echo "SSH config file restored failed, please manually check the config file and restore it."
+    fi
 fi
 
 find ~/ -type f -name "*.????????????????????.qcow2*" -exec rm {} +

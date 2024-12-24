@@ -4,8 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-plt.rcParams["font.family"] = "Times New Roman"
-
 '''
 Plot the CDF of in-flight stores at ordering points.
 This version plots 3 lines for one given file system:
