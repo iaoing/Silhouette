@@ -1,0 +1,127 @@
+config NOVA_FS
+	tristate "NOVA: log-structured file system for non-volatile memories"
+	depends on FS_DAX
+	depends on LIBNVDIMM
+	select CRC32
+	select LIBCRC32C
+	help
+	  If your system has a block of fast (comparable in access speed to
+	  system memory) and non-volatile byte-addressable memory and you wish
+	  to mount a light-weight filesystem with strong consistency support
+	  over it, say Y here.
+
+	  To compile this as a module, choose M here: the module will be
+	  called nova.
+
+	  If unsure, say N.
+
+menu "PM file system bugs"
+
+config NOVA_BUG1
+	bool "NOVA bug 1"
+	help
+	  Inject NOVA bug \#1 into the system. This bug causes NOVA to use perform an 
+	  out-of-bounds array access on a system with 1 CPU, which results in a null 
+	  pointer dereference. This bug causes a kernel panic, so it should be turned off
+	  if you are looking to reproduce any other bugs.
+
+config NOVA_BUG2
+	bool "NOVA bug 2"
+	help 
+	  Inject NOVA bug \#2 into the system. This bug occurs due to a missing cache line 
+	  flush and results in an inaccessible file. 
+
+config NOVA_BUG3
+	bool "NOVA bug 3"
+	help
+	  Inject NOVA bug \#3 into the system. This bug occurs due to incorrect assumptions 
+	  in recovery code about inode log pointer management and causes a null pointer 
+	  dereference. This bug causes a kernel panic, so it should be turned off if you
+	  are looking to reproduce any other bugs.
+
+config NOVA_BUG4
+	bool "NOVA bug 4"
+	help
+	  Inject NOVA bug \#4 into the system. This bug occurs because the removal of the 
+	  old dentry is not properly journaled during rename(). It results in file loss
+	  if the system crashes while renaming a file.
+
+config NOVA_BUG5
+	bool "NOVA bug 5"
+	help
+	  Inject NOVA bug \#5 into the system. This bug occurs because certain values 
+	  associated with dentries are not included in journal entries. It leaves a file 
+	  inaccessible and corrupted if the system crashes while renaming a file.
+
+config NOVA_BUG6
+	bool "NOVA bug 6"
+	help 
+		Inject NOVA bug \#6 into the system. This bug occurs because link count may be updated
+		in place if there is already a link count change entry in the journal, which is not 
+		crash-safe. It causes link to be non-atomic in this case, leaving a file with an 
+		incorrect link count after a crash.
+
+config NOVA_BUG7
+	bool "NOVA bug 7"
+	help
+		Inject NOVA bug \#7 into the system. This bug occurs because log entries may be read 
+		in an incorrect order after modifying and truncating a file using multiple file 
+		descriptors. It causes incorrect file size and potential data loss after a crash.
+
+config NOVA_BUG8
+	bool "NOVA bug 8"
+	help
+		Inject NOVA bug \#8 into the system. This bug occurs due to incorrect blocknr calculation
+		after using truncate and fallocate on a file with multiple file descriptors. It causes data loss. 
+
+config NOVA_FORTIS_BUG1
+	bool "NOVA-Fortis bug 1"
+	help 
+		Inject NOVA-Fortis bug \#1 into the system. Caused by a missing fence that allows updates to primary and backup logs to be reordered incorrectly. 
+
+config NOVA_FORTIS_BUG2
+	bool "NOVA-Fortis bug 2"
+	help
+		Inject NOVA-Fortis bug \#2 into the system. Caused by incorrect handling of primary and backup 
+		inode logs. Only one log may be initialized after a crash, but both are required to be properly
+		initialized to perform many operations.
+
+config PMFS_BUG1
+	bool "PMFS bug 1"
+	help 
+		Inject PMFS bug \#1 into the system. Occurs because of a logic error where files that were being
+		truncated during a crash are resolved before scanning FS metadata during recovery. This results in
+		an access to lost volatile data, causing a null pointer dereference during recovery. Causes a 
+		kernel panic.
+
+config PMFS_BUG2
+	bool "PMFS bug 2"
+	help
+		Inject PMFS bug \#2 into the system. Causes data write to be non-synchronous due to a missing fence.
+
+config PMFS_BUG4
+	bool "PMFS bug 4"
+	help
+		Inject PMFS bug \#4 into the system. Causes lost data when performing non-8-byte-aligned writes due to a bug in the function that flushes edge cache lines.
+
+config WINEFS_BUG1
+	bool "WineFS bug 1"
+	help 
+	  Inject WineFS bug \#1 into the system. Caused by an error when accessing per-CPU journals during recovery. Prevents new files from being created or deleted.
+
+config WINEFS_BUG2
+	bool "WineFS bug 2"
+	help 
+		Inject WineFS bug \#3 into the system. Causes data write to be non-synchronous due to a missing fence.
+
+config WINEFS_BUG3
+	bool "WineFS bug 3"
+	help
+		Inject WineFS bug \#3 into the system. Causes lost data when performing non-8-byte-aligned writes due to a bug in the function that flushes edge cache lines.
+
+config WINEFS_BUG4
+	bool "WineFS bug 4"
+	help
+	  Inject WineFS bug \#4 into the system. Causes data writes to be not atomic even in strict mode.
+
+endmenu # "NOVA bugs"
