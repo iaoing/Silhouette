@@ -306,12 +306,17 @@ class HostProc():
         assert ret, "copy repo to guest failed"
 
         # 4. build the info dump execution
-        cmd = f'make -C {self.env.INFO_DUMP_EXE_DIR()} LLVM15_HOME={self.env.GUEST_LLVM15_HOME()}'
+        cmd = f'make -B -C {self.env.INFO_DUMP_EXE_DIR()} LLVM15_HOME={self.env.GUEST_LLVM15_HOME()}'
+        cl_state = shell_cl_ssh_run(cmd, self.base_vm.ssh_config.alias_name, ttl=60)
+        assert cl_state.code == 0, "make info dump execution failed"
+
+        # 4. build the info disk content dump execution
+        cmd = f'make -B -C {self.env.DUMP_DISK_CONTENT_DIR()}'
         cl_state = shell_cl_ssh_run(cmd, self.base_vm.ssh_config.alias_name, ttl=60)
         assert cl_state.code == 0, "make dump disk content execution failed"
 
         # 5. build structure layout dump execution
-        cmd = f'make -C {self.env.STRUCT_LAYOUT_EXE_DIR()} LLVM15_HOME={self.env.GUEST_LLVM15_HOME()}'
+        cmd = f'make -B -C {self.env.STRUCT_LAYOUT_EXE_DIR()} LLVM15_HOME={self.env.GUEST_LLVM15_HOME()}'
         cl_state = shell_cl_ssh_run(cmd, self.base_vm.ssh_config.alias_name, ttl=60)
         assert cl_state.code == 0, "make struct info annotation execution failed"
 
@@ -469,7 +474,7 @@ class HostProc():
                 else:
                     test_case_basename = v1[0]
 
-        # restart the guest dedup script
+        # restart the guest script
         if test_case_basename:
             if test_case_basename not in self.retest_case_dict:
                 self.retest_case_dict[test_case_basename] = 0

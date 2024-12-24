@@ -32,7 +32,7 @@ The artifact evaluation could be conducted on the Chameleon platform, offering t
 
 #### 1.4 Personal Machine
 
-- Ubuntu-24.x
+- Ubuntu-22.x
     Silhouette works on any Linux systems, but other systems may have different versions of packages, which may different from the setups shown here.
 - Python-3.10.x
     You are free to install Python by `apt` or `pyenv`. Since Silhouette relies on `ctypes` and `readline`, please ensure the installed Python version includes these modules. Other Python versions are not tested and may not work if some packages/functions are deprecated over time.

@@ -79,7 +79,7 @@ class EnvBase(ABC):
 
     def BASE_IMG_FILE(self) -> str:
         '''the base qemu image file path'''
-        return '/home/cc/silhouette_ae/qemu_imgs/silhouette_guest_vm_001.qcow2'
+        return '/home/cc/silhouette_ae/qemu_imgs/silhouette_guest_vm.qcow2'
 
     def NUM_CPU(self) -> int:
         '''number of CPUs for a vm'''

@@ -1,4 +1,0 @@
-[submodule "codebase/test_chipmunk/chipmunk"]
-	path = codebase/test_chipmunk/chipmunk
-	url = https://github.com/utsaslab/chipmunk.git
-	branch = main
