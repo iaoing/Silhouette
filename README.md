@@ -7,7 +7,7 @@ There are two ways to evaluate this artifact, by using [Chameleon Trovi](https:/
 
 ## Option A. Chameleon Cloud
 
-If you are using Chameleon Cloud, please use the link: XXXX
+[Silhouette Artifact at Chameleon Trovi](https://www.chameleoncloud.org/experiment/share/3c807f1d-80db-443c-8d88-c645fa3695e8)
 
 You can also find a copy of the JupyterLab script at `silhouette_ae.ipynb`
 
