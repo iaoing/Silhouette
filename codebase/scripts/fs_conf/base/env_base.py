@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import netifaces
+import os
 
 class EnvBase(ABC):
     """docstring for EnvBase."""
@@ -15,7 +16,7 @@ class EnvBase(ABC):
 
     def SSH_CONFIG_FILE(self) -> str:
         '''the ssh config file path'''
-        return '~/.ssh/config'
+        return os.path.abspath(os.path.expanduser('~/.ssh/config'))
 
     def SSH_KEY_FILE(self) -> str:
         '''the ssh key file path to access the vm'''
@@ -79,7 +80,7 @@ class EnvBase(ABC):
 
     def BASE_IMG_FILE(self) -> str:
         '''the base qemu image file path'''
-        return '~/silhouette_ae/qemu_imgs/silhouette_guest_vm.qcow2'
+        return os.path.abspath(os.path.expanduser('~/silhouette_ae/qemu_imgs/silhouette_guest_vm.qcow2'))
 
     def NUM_CPU(self) -> int:
         '''number of CPUs for a vm'''
@@ -188,7 +189,7 @@ class EnvBase(ABC):
     '''
     def HOST_REPO_HOME(self) -> str:
         '''the dir of the silhouette codebase home on the host machine'''
-        return '~/silhouette_ae/Silhouette'
+        return os.path.abspath(os.path.expanduser('~/silhouette_ae/Silhouette'))
 
     def GUEST_REPO_HOME(self) -> str:
         '''the dir of the silhouette codebase home on the guest machine'''

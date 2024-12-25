@@ -483,3 +483,25 @@ def mc_cas_wrapper(mc_client : CMPooledClient, key, value, cas_id):
         raise GuestExceptionForDebug(msg)
     finally:
         log.flush_all()
+
+def mc_flush_all_wrapper(mc_client : CMPooledClient):
+    '''Not thread safe'''
+    ret = None
+    try:
+        mc_client.flush_all(noreply=False)
+    except MemcachedOPFailed as e:
+        raise
+    except MemcacheUnexpectedCloseError as e:
+        msg = f"{traceback.format_exc()}\nmc cas exception: {e}"
+        log.global_logger.error(msg)
+        raise GuestExceptionForDebug(msg)
+    except TimeoutError as e:
+        msg = f"{traceback.format_exc()}\nmc cas timeout: {e}"
+        log.global_logger.error(msg)
+        raise MemcachedOPFailed(msg)
+    except Exception as e:
+        msg = f"{traceback.format_exc()}\nmc cas unknown exceptions: {e}"
+        log.global_logger.error(msg)
+        raise GuestExceptionForDebug(msg)
+    finally:
+        log.flush_all()

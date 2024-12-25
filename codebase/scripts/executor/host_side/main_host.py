@@ -181,6 +181,7 @@ class HostProc():
 
         # since we do have use this client in multiple threads, set up a single client is okay.
         self.memcached_client : any[CMClient, CMPooledClient] = mc_wrapper.setup_memcached_client(self.env.MEMCACHED_IP_ADDRESS_HOST(), self.env.MEMCACHED_PORT(), vm_id='host_machine')
+        mc_wrapper.mc_flush_all_wrapper(self.memcached_client)
         # init some key-value pairs
         self._init_mc_kvs()
 
