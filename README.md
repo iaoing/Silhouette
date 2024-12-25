@@ -5,13 +5,6 @@ Artifact of the paper "Silhouette: Leveraging Consistency Mechanisms to Detect B
 
 There are two ways to evaluate this artifact, by using [Chameleon Trovi](https://chameleoncloud.readthedocs.io/en/latest/technical/sharing.html) or a local machine.
 
-A prepared guest VM is available at [Zenodo](https://zenodo.org/records/14550794).
-What inside this guest VM:
-- The installed kernel-5.1 (compiled by LLVM) with support to NOVA, PMFS, and WineFS modules.
-- Some pre-built ACE workload.
-- The Silhouette are not inside the VM, they are scp-ed to the VM during running.
-- You may log in to the VM to check what inside it by use the username `bing` and the key in `Silhouette/codebase/scripts/fs_conf/sshkey`.
-
 ## Option A. Chameleon Cloud
 
 [Silhouette Artifact at Chameleon Trovi](https://www.chameleoncloud.org/experiment/share/3c807f1d-80db-443c-8d88-c645fa3695e8)
@@ -43,17 +36,24 @@ Open a terminal and then execute the below commands.
 mkdir -p ~/silhouette_ae
 cd ~/silhouette_ae
 git clone https://github.com/iaoing/Silhouette.git
+```
 
-# 2.2 Download a guest VM from Zenodo, ~30 GB
-#     What inside the VM?
-#     - installed kernel-5.1 (compiled by LLVM) with support to NOVA, PMFS, and WineFS modules.
-#     - Some pre-built ACE workload.
-#     - The Silhouette are not inside the VM, they are scp-ed to the VM during running. You may log in to the VM to check what inside it.
+A prepared guest VM is available at [Zenodo](https://zenodo.org/records/14550794).
+What inside this guest VM:
+- The installed kernel-5.1 (compiled by LLVM) with support to NOVA, PMFS, and WineFS modules.
+- Some pre-built ACE workload.
+- The Silhouette code is not inside the VM. They are scp-ed to the VM during running.
+- You may log in to the VM to check what inside it by use the username `bing` and the key in `Silhouette/codebase/scripts/fs_conf/sshkey`.
+
+Download a guest VM from Zenodo, ~30 GB
+```shell
 mkdir -p ~/silhouette_ae/qemu_imgs
 cd ~/silhouette_ae/qemu_imgs
 wget https://zenodo.org/records/14550794/files/silhouette_guest_vm.qcow2
+```
 
-# 2.3 Install Deps and Prepare
+Install Deps and Prepare
+```shell
 cd ~/silhouette_ae/Silhouette && bash ./install_dep.sh
 cd ~/silhouette_ae/Silhouette && bash ./prepare.sh
 ```
