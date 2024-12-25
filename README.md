@@ -34,7 +34,7 @@ git clone https://github.com/iaoing/Silhouette.git
 # 2.2 Download VM from Zenodo, may take ~20 mins
 mkdir -p ~/silhouette_ae/qemu_imgs
 cd ~/silhouette_ae/qemu_imgs
-wget -O ~/silhouette_ae/qemu_img/silhouette_guest_vm.qcow2 https://zenodo.org/records/14550794/files/silhouette_guest_vm.qcow2
+wget https://zenodo.org/records/14550794/files/silhouette_guest_vm.qcow2
 
 # 2.3 Install Deps and Prepare
 cd ~/silhouette_ae/Silhouette && bash ./install_dep.sh
