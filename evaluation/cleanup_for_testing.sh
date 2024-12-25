@@ -2,9 +2,9 @@
 
 set -x
 
-sudo pkill -e -f main_host.py
-sudo pkill -e -f qemu-system-x86
-sudo pkill -e -f memcached
+pkill -e -f main_host.py
+pkill -e -f qemu-system-x86
+pkill -e -f memcached
 
 set -e
 

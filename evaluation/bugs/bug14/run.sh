@@ -21,7 +21,7 @@ echo "$BASE_ENV_PATCH_CODE" >> "$BASE_ENV_FILE"
 BASE_ENV_END_LINE=$(wc -l < "$BASE_ENV_FILE")
 
 # 2. Start memcached
-memcached -d -m 4096 -t 4 -R 10 -p 11211 -u memcache -l 127.0.0.1 -c 1024 -I 512m -P /var/run/memcached/memcached.pid -o no_maxconns_fast
+memcached -d -m 4096 -t 4 -R 10 -p 11211  -l 127.0.0.1 -c 1024 -I 512m -P /var/run/memcached/memcached.pid -o no_maxconns_fast
 
 # 3. Run Silhouette
 HOST_SCRIPT="../../../codebase/scripts/executor/host_side/main_host.py"
