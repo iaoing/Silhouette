@@ -21,11 +21,14 @@ As FAST '25 artifact reviewers, you should have the account distributed or the p
 
 ### 1. Platform
 
-If you are using a personal machine (e.g., a virtual machine, a remote node, a local PC), please make sure you have:
+If you are using a personal machine (e.g., a virtual machine, a remote node, a local PC), please make sure:
+- Hardware:
+    - Support KVM (Silhouette may work without KVM, but we did not test it. You may need to modify some code in `Silhouette/codebase/scripts/vm_mgr/vm_instance.py` to make sure QEMU can start if your hardware or OS does not support KVM).
+    - CPU: We tested Silhouette only on the CPU that supports Persistent Memory ([list](https://www.intel.com/content/www/us/en/support/articles/000055996/memory-and-storage/intel-optane-persistent-memory.html)). You may need to modify some code in `Silhouette/codebase/scripts/vm_mgr/vm_instance.py` to make sure QEMU can start if your hardware does not support PM.
 - Ubuntu-22.x:
-    Silhouette works on any Linux systems, but other systems may have different versions of packages, which may different from the setups shown here.
+    - Silhouette works on any Linux systems, but other systems may have different versions of packages, which may differ from the setups shown here.
 - Python-3.10.x:
-    You are free to install Python by `apt` or `pyenv`. Since Silhouette relies on `ctypes` and `readline`, please ensure the installed Python version includes these modules. Other Python versions are not tested and may not work if some packages/functions are deprecated over time.
+    - You are free to install Python by `apt` or `pyenv`. Since Silhouette relies on `ctypes` and `readline`, please ensure the installed Python version includes these modules. Other Python versions are not tested and may not work if some packages/functions are deprecated over time.
 
 ### 2. Prepare Codebase and VM
 
@@ -161,8 +164,10 @@ After testing, a `result` directory will be generated under each subdirectory (e
 ## Troubleshot
 
 - If any test exits with errors, you may need to check some files for integrity:
-    - `~/.ssh/config`
-    - `codebase/scripts/fs_conf/base/env_base.py`
-    - `codebase/scripts/fs_conf/{FS}/env_{FS}.py`
+    - Run `bash evaluation/cleanup_for_testing.sh` to kill running processes and try to recover some configuration files
+    - Check `~/.ssh/config` and remove newly added hosts
+    - Remove `~/.ssh/config-yyyy.mm.dd.hh.mm.ss.ff` files if exist
+    - Remove all code after the class definition in `codebase/scripts/fs_conf/base/env_base.py`
+    - Remove all code after the class definition in `codebase/scripts/fs_conf/{FS}/env_{FS}.py`
 - If the directories to store the codebase and the guest VM are different from the paths shown in the above examples, you may need to modify the [configuration files](https://github.com/iaoing/Silhouette/tree/main/codebase/scripts/fs_conf)
-- If Memcached or QEMU requires running with the sudo privilege, you may need to modify some commands and some path in the [configuration files](https://github.com/iaoing/Silhouette/tree/main/codebase/scripts/fs_conf) to avoid the incorrect expand of ~.
+- If Memcached or QEMU requires running with the sudo privilege, you may need to modify some commands and some path in the [configuration files](https://github.com/iaoing/Silhouette/tree/main/codebase/scripts/fs_conf) to avoid the incorrect expand of ~ and permission issues.
