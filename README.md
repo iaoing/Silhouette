@@ -5,26 +5,26 @@ Artifact of the paper "Silhouette: Leveraging Consistency Mechanisms to Detect B
 
 There are two ways to evaluate this artifact, by using [Chameleon Trovi](https://chameleoncloud.readthedocs.io/en/latest/technical/sharing.html) or a local machine.
 
-## Option A. Chameleon Cloud
+## Option A. Chameleon Cloud (Recommended)
 
 [Silhouette Artifact at Chameleon Trovi](https://www.chameleoncloud.org/experiment/share/3c807f1d-80db-443c-8d88-c645fa3695e8)
 
-You can also find a copy of the JupyterLab script at `silhouette_ae.ipynb`
+You can also find a copy of the JupyterLab script at [silhouette_ae.ipynb](https://github.com/iaoing/Silhouette/blob/main/silhouette_ae.ipynb)
 
-To access Chameleon Cloud resources, you may need an account to log in to Chameleon Cloud. You also need to have a project (budget) to allocate resources (e.g., node).
+To access Chameleon Cloud resources, you may need an account (anonymous to the artifact owner) to log in to Chameleon Cloud. You also need to have a project (budget) to allocate resources (e.g., node).
 
-Chameleon provides [Day Pass](https://chameleoncloud.readthedocs.io/en/latest/technical/daypass.html) to test artifacts. However, the day pass requires the application to and approval from the artifact owner (us). Also, the resources used for Day Pass are charged from the owner's budget. Thus, the day pass is not anonymous.
+Chameleon provides [Day Pass](https://chameleoncloud.readthedocs.io/en/latest/technical/daypass.html) to test artifacts. However, the day pass requires the application to and approval from the artifact owner (us) so that the day pass is not anonymous.
 
-As FAST '25 artifact reviewers, you should have the account distributed or the project (budget) assigned by the FAST AE committee. If you do not have it, please contact the committee.
+As FAST '25 artifact reviewers, you should have the account distributed or the project (budget) assigned by the FAST AE committee to comply with the single-bind policy. If you do not have it, please contact the committee.
 
 ## Option B. Personal Machine
 
 ### 1. Platform
 
 If you are using a personal machine (e.g., a virtual machine, a remote node, a local PC), please make sure you have:
-- Ubuntu-22.x
+- Ubuntu-22.x:
     Silhouette works on any Linux systems, but other systems may have different versions of packages, which may different from the setups shown here.
-- Python-3.10.x
+- Python-3.10.x:
     You are free to install Python by `apt` or `pyenv`. Since Silhouette relies on `ctypes` and `readline`, please ensure the installed Python version includes these modules. Other Python versions are not tested and may not work if some packages/functions are deprecated over time.
 
 ### 2. Prepare Codebase and VM
@@ -58,6 +58,18 @@ cd ~/silhouette_ae/Silhouette && bash ./install_dep.sh
 cd ~/silhouette_ae/Silhouette && bash ./prepare.sh
 ```
 
+Test the downloaded VM image:
+- Use the below command to start the VM.
+    ```shell
+    qemu-system-x86_64 -machine pc-q35-focal,accel=kvm,nvdimm=on -cpu host -smp cpus=1 -m 4G,slots=8,maxmem=128G -enable-kvm -drive file=~/silhouette_ae/qemu_imgs/silhouette_guest_vm.qcow2,format=qcow2,index=0,media=disk -boot once=c -vnc :1 -net nic -net user,hostfwd=tcp::9001-:22 -daemonize
+    ```
+- Then, after 1 min (the VM may need 30s - 1min to boot), access the VM via SSH. The user name is `bing` and the pwd is `123456`. You may also use the [key](https://github.com/iaoing/Silhouette/tree/main/codebase/scripts/fs_conf/sshkey) to access it.
+    ```shell
+    ssh -p 9001 bing@localhost
+    ```
+- Do not remove the workload directories inside the VM image. It will affect the testing. You can use `qemu-img create` to snapshot it to avoid affecting the subsequent testing.
+- At last, close the QEMU (e.g., `pkill`).
+
 ### 3. Reproduction
 
 #### 3.1 Reproduce Bugs
@@ -66,18 +78,17 @@ The bug reproduction may take ~2 hours because:
 - Some bugs may block other bugs, we make separate tests for each one.
 - Regardless of the number of test cases, Silhouette follows the same process to prepare virtual machines (VMs). As a result, over 90% of the time is spent setting up the VM for each bug reproduction.
 
-Please refer to `evaluation/bugs/readme.md` for the detailed instructions.
-
+In a terminal, execute the belwo command:
 ```shell
 cd ~/silhouette_ae/Silhouette/evaluation/bugs
 nohup bash ./reproduce_all.sh &
 ```
 
-When the test is done, please refer to `evaluation/bugs/bug{XX}/readme.md` to check the output.
+When the test is done, please refer to `evaluation/bugs/bugXX/readme.md` in the git repo to check Silhouette output and the bug report and the detail of each bug (e.g., [Bug1](https://github.com/iaoing/Silhouette/blob/main/evaluation/bugs/bug1/readme.md)).
 
-#### 3.2 Scalibility Evaluation
+#### 3.2 Scalability Evaluation
 
-The entire scalabitilt test (as paper descirbed) may take around one week. Thus, we provided two small tests here. Each of it needs to run about 4-5 hours. You may run all of them, or just one depends on your convenience. Also, you can modify the commands to run other tests.
+The entire scalability test (as paper described) may take around one week. Thus, we provided two small tests here. Each of it needs to run about 4-5 hours. You may run all of them, or just one depends on your convenience. Also, you can modify the commands to run other tests.
 
 **3.2.1 Test NOVA on ACE-seq3 workload with 20 VMs**
 
@@ -85,14 +96,12 @@ Since testing NOVA, PMFS, and WineFS on ACE-seq3 workload with different crash p
 
 This test takes ~4-5 hours. If you would like to run the entire seq3 workload, please refer to Section 3.3.
 
-Please refer to `evaluation/scalability/readme.md` for the detailed instructions.
-
 ```shell
 cd ~/silhouette_ae/Silhouette/evaluation/scalability/seq3/nova/mech2cp
 nohup bash ./run.sh &
 ```
 
-The result will be available in the `~/silhouette_ae/Silhouette/evaluation/scalability/seq3/nova/mech2cp/result` directory. please refer to the `Raw Result Layout` section in `evaluation/scalability/readme.md` to check the type generated result.
+The result will be available in the `~/silhouette_ae/Silhouette/evaluation/scalability/seq3/nova/mech2cp/result` directory. Please refer to Section 3.2.3 to check the details of generated result.
 
 Samples:
 ```shell
@@ -148,3 +157,12 @@ After testing, a `result` directory will be generated under each subdirectory (e
     ├── result_validation           -> the validation results
     └── result_vminfo.txt           -> the general info of running VMs
 ```
+
+## Troubleshot
+
+- If any test exits with errors, you may need to check some files for integrity:
+    - `~/.ssh/config`
+    - `codebase/scripts/fs_conf/base/env_base.py`
+    - `codebase/scripts/fs_conf/{FS}/env_{FS}.py`
+- If the directories to store the codebase and the guest VM are different from the paths shown in the above examples, you may need to modify the [configuration files](https://github.com/iaoing/Silhouette/tree/main/codebase/scripts/fs_conf)
+- If Memcached or QEMU requires running with the sudo privilege, you may need to modify some commands and some path in the [configuration files](https://github.com/iaoing/Silhouette/tree/main/codebase/scripts/fs_conf) to avoid the incorrect expand of ~.
