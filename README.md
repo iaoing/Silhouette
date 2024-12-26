@@ -29,7 +29,7 @@ If you are using a personal machine (e.g., a virtual machine, a remote node, a l
     - CPU: We tested Silhouette only on the CPU that supports Persistent Memory ([list](https://www.intel.com/content/www/us/en/support/articles/000055996/memory-and-storage/intel-optane-persistent-memory.html)). You may need to modify some code in `Silhouette/codebase/scripts/vm_mgr/vm_instance.py` to make sure QEMU can start if your hardware does not support PM.
     - In summary, if your machine can start the VM, it should be okay to run Silhouette.
         - You can also modify the QEMU arguments to start the VM and update the file, `Silhouette/codebase/scripts/vm_mgr/vm_instance.py`, accordingly.
-        - Please refer to [Section 2](2.-Prepare-Codebase-and-VM) to download the VM image.
+        - Please refer to [Section 2](#2-prepare-codebase-and-vm) to download the VM image.
 - Ubuntu-22.x:
     - Silhouette works on any Linux systems, but other systems may have different versions of packages, which may differ from the setups shown here.
 - Python-3.10.x:
