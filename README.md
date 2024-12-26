@@ -9,6 +9,8 @@ There are two ways to evaluate this artifact, by using [Chameleon Trovi](https:/
 
 [Silhouette Artifact at Chameleon Trovi](https://www.chameleoncloud.org/experiment/share/3c807f1d-80db-443c-8d88-c645fa3695e8)
 
+Please use this link to go view the artifact on Chameleon Trovi: https://www.chameleoncloud.org/experiment/share/3c807f1d-80db-443c-8d88-c645fa3695e8
+
 You can also find a copy of the JupyterLab script at [silhouette_ae.ipynb](https://github.com/iaoing/Silhouette/blob/main/silhouette_ae.ipynb)
 
 To access Chameleon Cloud resources, you may need an account (anonymous to the artifact owner) to log in to Chameleon Cloud. You also need to have a project (budget) to allocate resources (e.g., node).
@@ -25,6 +27,9 @@ If you are using a personal machine (e.g., a virtual machine, a remote node, a l
 - Hardware:
     - Support KVM (Silhouette may work without KVM, but we did not test it. You may need to modify some code in `Silhouette/codebase/scripts/vm_mgr/vm_instance.py` to make sure QEMU can start if your hardware or OS does not support KVM).
     - CPU: We tested Silhouette only on the CPU that supports Persistent Memory ([list](https://www.intel.com/content/www/us/en/support/articles/000055996/memory-and-storage/intel-optane-persistent-memory.html)). You may need to modify some code in `Silhouette/codebase/scripts/vm_mgr/vm_instance.py` to make sure QEMU can start if your hardware does not support PM.
+    - In summary, if your machine can start the VM, it should be okay to run Silhouette.
+        - You can also modify the QEMU arguments to start the VM and update the file, `Silhouette/codebase/scripts/vm_mgr/vm_instance.py`, accordingly.
+        - Please refer to [Section 2](2.-Prepare-Codebase-and-VM) to download the VM image.
 - Ubuntu-22.x:
     - Silhouette works on any Linux systems, but other systems may have different versions of packages, which may differ from the setups shown here.
 - Python-3.10.x:
