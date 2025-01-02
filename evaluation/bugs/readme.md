@@ -53,13 +53,12 @@ Since some bugs may block other bugs, we make separate tests for each one. The b
     - why false positive: As mentioned in the paper, we assume that replicas are synchronized using the `memcpy` instruction. However, in some cases, the store to the primary is also made by `memcpy`. Thus, Silhouette will consider the `memcpy` is a sync operation that copies data from the primary to the replica and will fail to find the stores to the supposed primary.
     - how to avoid the alarm: Handling this situation, copying from DRAM to both the PM primary and replica, in the `mech_repl_reason` file. In detail, if the source addresses and sizes of two to-PM copies are the same, Silhouette should consider they are the copies to the primary and the replica. (TODO)
 
-2. UndoJnlInvariantErrorType.NO_IN_PLACE_WRITE
+## Benign Positives
+
+1. UndoJnlInvariantErrorType.NO_IN_PLACE_WRITE
 
     - file system: NOVA-fortis
     - test cases: seq1_11func_bin/j-lang36, etc.
     - function: nova_rename
-    - why reported: Conceptually, if data is journaled, it should be updated then. Silhouette detected that there are no corresponding in-writes to the journaled data.
-    - why false positive: To fix a bug detected by Chipmunk ([issue](https://github.com/NVSL/linux-nova/issues/119)), NOVA journals some variables that won't be updated in some situations ([commit](https://github.com/NVSL/linux-nova/commit/6d1dfd730b31e81a33703f76e2ca34cbf634580f), [code](https://github.com/NVSL/linux-nova/blob/976a4d1f3d5282863b23aa834e02012167be6ee2/fs/nova/journal.c#L279-L287)), leading to this false positive reported by Silhouette.
-    - how to avoid the alarm:
-        - Since `NO_IN_PLACE_WRITE` is a performance issue, disabling this invariant check is okay.
-        - Otherwise, rewrite the logic to avoid journaling unnecessary variables.
+    - why reported: Conceptually, if data is journaled, it should be updated then. Silhouette detected that there are no corresponding in-writes to the journaled data, resulting in an alarm (performance issue, benign positive)
+    - why positive: To fix a bug detected by Chipmunk ([issue](https://github.com/NVSL/linux-nova/issues/119)), NOVA journals some variables that won't be updated in some situations ([commit](https://github.com/NVSL/linux-nova/commit/6d1dfd730b31e81a33703f76e2ca34cbf634580f), [code](https://github.com/NVSL/linux-nova/blob/976a4d1f3d5282863b23aa834e02012167be6ee2/fs/nova/journal.c#L279-L287)), leading to false positive reported by Silhouette.
